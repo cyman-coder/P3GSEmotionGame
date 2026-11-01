@@ -1,0 +1,2687 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f5ef">
+<title>情緒漂流所｜情緒泡泡遊戲</title>
+<style>
+:root{
+  color-scheme:light;
+  --ink:#293f48;
+  --muted:#64747a;
+  --paper:#f7f5ef;
+  --purple:#7052ba;
+  --mint:#286f60;
+  --accent:#a44762;
+  --accent-soft:#ffedf2;
+  --line:#dbe3df;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0;
+  color:var(--ink);
+  background:
+    radial-gradient(ellipse at 8% 10%,#e2eee6 0,transparent 35%),
+    radial-gradient(ellipse at 94% 80%,#ebe3f6 0,transparent 38%),
+    var(--paper);
+  font-family:system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+  line-height:1.6;
+}
+button,input{font:inherit}
+button{
+  cursor:pointer;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+button:focus-visible,input:focus-visible,summary:focus-visible{
+  outline:3px solid #7452b8;
+  outline-offset:4px;
+}
+button:disabled{cursor:default}
+h1,h2,h3,p{margin:0}
+button{color:inherit}
+.shell{max-width:1280px;margin:auto;padding:24px}
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;margin-bottom:24px;
+}
+.brand{display:flex;gap:13px;align-items:center}
+.brand-mark{
+  width:54px;height:54px;border:1px solid #fff;border-radius:19px;
+  display:grid;place-items:center;font-size:29px;
+  background:linear-gradient(140deg,#d2eee5,#e4d9f5);
+  box-shadow:0 6px 18px #47665b12;
+}
+.brand h1{font-size:1.4rem;letter-spacing:.1em}
+.eyebrow{
+  font-size:.68rem;font-weight:850;letter-spacing:.2em;
+  color:var(--muted);text-transform:uppercase;
+}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tool{
+  min-height:44px;padding:9px 13px;border:1px solid #d9e2dc;
+  border-radius:14px;background:#ffffffb8;font-size:.85rem;font-weight:750;
+}
+.tool:hover{background:white;border-color:#a7bcb4}
+.volume{display:flex;align-items:center;gap:5px;font-size:.8rem;color:var(--muted)}
+.volume input{width:65px;accent-color:var(--mint)}
+.main-grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:24px}
+.sidebar{display:flex;flex-direction:column;gap:16px}
+.intro{padding:7px 5px 2px}
+.intro h2{font-size:2.45rem;line-height:1.2;letter-spacing:-.05em;margin:10px 0}
+.intro h2 span{color:var(--mint)}
+.intro p{color:var(--muted);font-size:.9rem}
+.stage-list{display:grid;gap:8px;margin:20px 0 0}
+.stage{
+  display:flex;align-items:center;gap:12px;
+  border:1px solid transparent;border-radius:16px;padding:10px 12px;
+  color:#697976;font-size:.9rem;
+}
+.stage .num{
+  width:33px;height:33px;display:grid;place-items:center;
+  border-radius:50%;background:#e7eae2;font-size:.8rem;font-weight:850;
+}
+.stage strong{display:block;font-size:.94rem}
+.stage small{font-size:.74rem}
+.stage.active{
+  background:white;border-color:#d8e4db;color:#285c50;
+  box-shadow:0 6px 18px #3d69500a;
+}
+.stage.active .num{background:#315f52;color:white}
+.stage.done .num{background:#d5ebdd;color:#286046}
+.mission{
+  position:relative;overflow:hidden;border-radius:24px;
+  background:var(--accent-soft);border:1px solid #ffffff;
+  padding:23px;
+  box-shadow:0 10px 30px #555b6510;
+  transition:background .35s;
+}
+.mission::after{
+  content:"";position:absolute;width:125px;height:125px;
+  border:20px solid #ffffff55;border-radius:50%;
+  right:-65px;top:-45px;pointer-events:none;
+}
+.mission-label{font-size:.82rem;font-weight:800;color:var(--accent)}
+.mission-word{
+  font-size:clamp(2rem,3.2vw,2.8rem);font-weight:950;
+  letter-spacing:.03em;line-height:1.25;color:var(--accent);
+  margin:10px 0 12px;
+}
+.mission-sub{font-size:.9rem;color:#4b5f64}
+.target-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 10px;border-radius:99px;background:white;
+  color:var(--accent);font-weight:850;font-size:.8rem;
+}
+.target-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.switch-box{
+  margin-top:15px;background:#ffffffbf;border-radius:12px;
+  padding:10px 12px;font-size:.82rem;color:#53626b;
+}
+.switch-box strong{display:block;color:#665098;font-size:1.06rem}
+.switch-track{height:4px;background:#ded8e9;margin-top:7px;border-radius:9px;overflow:hidden}
+.switch-fill{width:0;height:100%;background:#8063ac}
+.switch-box.warning{background:#fff9da;border:1px solid #e0cc79}
+.switch-box.warning strong{color:#70571c}
+.note{
+  display:flex;gap:10px;padding:15px;background:#ffffff70;
+  border:1px dashed #c8d7cb;border-radius:18px;
+  font-size:.82rem;color:#536560;
+}
+.note>span{font-size:1.35rem}
+.note strong{color:#31574b}
+.board{
+  border:1px solid white;border-radius:30px;padding:14px;
+  background:#ffffffa8;box-shadow:0 18px 60px #445c5410;
+  min-width:0;
+}
+.hud{
+  display:grid;grid-template-columns:1fr 1fr 1.2fr;
+  align-items:center;gap:14px;padding:9px 13px 18px;
+}
+.metric{display:flex;align-items:center;gap:10px;min-width:0}
+.metric-icon{
+  width:39px;height:39px;border-radius:13px;
+  display:grid;place-items:center;background:#f1eee7;font-size:1.15rem;
+}
+.metric:nth-child(2) .metric-icon{background:#fff1d3}
+.metric small{display:block;font-size:.69rem;color:var(--muted)}
+.metric strong{font-size:1.65rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.metric em{font-size:.8rem;font-style:normal;margin-left:3px}
+.metric.warning{color:#a13c4c}
+.metric.warning .metric-icon{background:#ffe4e8}
+.energy{display:flex;gap:4px;margin-top:7px}
+.energy i{
+  width:18px;height:7px;border-radius:8px;
+  background:#e2e9e1;transition:background .2s;
+}
+.energy i.filled{background:#609b81;box-shadow:0 0 8px #70a98b30}
+.aquarium{
+  position:relative;isolation:isolate;overflow:hidden;
+  height:clamp(420px,65vh,690px);
+  border-radius:22px;
+  background:
+    radial-gradient(ellipse at 10% 15%,#ffffffc9 0,transparent 45%),
+    radial-gradient(ellipse at 95% 35%,#dfd1f18c 0,transparent 50%),
+    linear-gradient(180deg,#e8f2ed 0%,#d6e9e6 45%,#bbd8d9 100%);
+  box-shadow:inset 0 0 35px #58888016;
+}
+.aquarium::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:repeating-linear-gradient(110deg,
+    transparent 0 100px,#ffffff20 110px 155px,transparent 170px 230px);
+  pointer-events:none;
+}
+.watermark{
+  position:absolute;left:23px;top:20px;z-index:1;
+  font-size:.64rem;letter-spacing:.2em;color:#577d76;
+  pointer-events:none;
+}
+.live{display:inline-block;width:6px;height:6px;background:#5f9485;border-radius:50%;margin-right:6px}
+.tank-label{
+  position:absolute;right:20px;top:15px;z-index:1;
+  background:#ffffff80;border:1px solid #ffffffb0;
+  padding:5px 10px;border-radius:10px;color:#58716c;font-size:.7rem;
+  pointer-events:none;
+}
+.seabed{
+  position:absolute;bottom:-2px;left:0;width:100%;height:160px;
+  pointer-events:none;z-index:0;
+}
+.bubble-layer{position:absolute;inset:0;z-index:3}
+.bubble{
+  position:absolute;width:var(--size);height:var(--size);
+  padding:0;border-radius:50%;border:1.5px solid #ffffffe6;
+  background:
+    radial-gradient(ellipse at 30% 18%,#ffffffec 0%,#ffffff44 28%,transparent 50%),
+    radial-gradient(circle at 35% 32%,#ffffff99 0%,var(--bubble-color) 100%);
+  box-shadow:
+    inset 0 -9px 14px #ffffff70,
+    inset -5px -6px 12px #7696a522,
+    inset 3px 4px 10px #ffffffbb,
+    0 8px 15px #39586716;
+  display:grid;place-items:center;
+  transition:box-shadow .15s;
+  touch-action:manipulation;
+}
+.bubble::before{
+  content:"";position:absolute;inset:7px;
+  border:1px solid #ffffff67;border-radius:50%;pointer-events:none;
+}
+.bubble::after{
+  content:"";position:absolute;top:11%;left:21%;
+  width:26%;height:13%;border-radius:50%;background:#ffffffe0;
+  transform:rotate(-35deg);filter:blur(1px);pointer-events:none;
+}
+.bubble span{
+  position:relative;font-size:clamp(1.25rem,2.4vw,1.65rem);
+  font-weight:950;color:#253e48;
+  padding:2px 7px;border-radius:12px;
+  background:#ffffff52;text-shadow:0 1px 5px white;
+  pointer-events:none;
+}
+.bubble:hover{
+  box-shadow:inset 0 -9px 14px #ffffff90,0 0 0 4px #ffffff70,0 12px 25px #39586720;
+}
+.bubble:focus-visible{outline:4px solid #5b4392;outline-offset:2px;z-index:5}
+.bubble:active{filter:brightness(1.07)}
+#fx{
+  position:absolute;inset:0;width:100%;height:100%;
+  z-index:5;pointer-events:none;
+}
+.combo{
+  position:absolute;left:50%;top:52px;transform:translateX(-50%);
+  z-index:6;pointer-events:none;padding:7px 17px;
+  border-radius:99px;background:#ffffffed;color:#655093;
+  box-shadow:0 5px 20px #68517b15;
+  font-weight:850;font-size:.85rem;white-space:nowrap;
+}
+.float-score{
+  position:absolute;z-index:6;pointer-events:none;
+  color:#315f50;font-size:1.45rem;font-weight:950;
+  text-shadow:0 2px 5px white;
+  animation:scoreUp .9s ease-out forwards;
+}
+@keyframes scoreUp{
+  from{opacity:1;transform:translate(-50%,-30%) scale(.8)}
+  25%{transform:translate(-50%,-60%) scale(1.15)}
+  to{opacity:0;transform:translate(-50%,-180%) scale(1)}
+}
+.tank-hint{
+  position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
+  padding:6px 16px;background:#ffffffb5;border:1px solid #ffffffcc;
+  border-radius:99px;z-index:1;color:#456560;font-size:.77rem;
+  white-space:nowrap;pointer-events:none;
+}
+.board-footer{
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:8px;padding:13px 10px 2px;
+  font-size:.77rem;color:#61756e;
+}
+.board-footer strong{color:#456553}
+.collection{margin-top:22px;display:flex;align-items:flex-start;gap:18px}
+.collection-title{min-width:90px;padding-top:4px;font-size:.86rem}
+.collection-title small{display:block;font-size:.65rem;color:var(--muted);letter-spacing:.1em}
+.collection-list{display:flex;flex-wrap:wrap;gap:7px}
+.word-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 12px;border-radius:12px;border:1px solid #dbe2db;
+  background:#ffffff75;color:#74807b;font-size:.84rem;
+}
+.word-chip.found{background:#e1eee5;color:#325e49;border-color:#bed5c5;font-weight:800}
+.word-chip.extra{border-style:dashed}
+.word-chip b{font-size:.72rem}
+footer{text-align:center;font-size:.72rem;color:#6c7d76;padding:23px 0 3px}
+
+/* 首頁、解說及過關：雜誌式情緒卡 */
+dialog{
+  border:1px solid #fff;border-radius:30px;padding:0;
+  background:#fafaf5;color:var(--ink);
+  width:min(550px,calc(100% - 28px));
+  max-height:calc(100dvh - 30px);
+  overflow:auto;
+  box-shadow:0 30px 100px #273a4933;
+}
+dialog::backdrop{background:#2c45476b;backdrop-filter:blur(9px)}
+.modal-art{
+  height:134px;position:relative;overflow:hidden;
+  background:linear-gradient(115deg,#d8ece4,#e6ddf1);
+  display:flex;align-items:center;justify-content:center;
+}
+.art-orbit{width:235px;height:235px;border:1px solid #ffffff9c;border-radius:50%;position:absolute}
+.art-orbit.two{width:330px;height:330px}
+.art-bubble{
+  position:absolute;display:grid;place-items:center;
+  width:82px;height:82px;border-radius:50%;
+  border:1px solid white;
+  background:radial-gradient(circle at 28% 22%,white,#e3e6fc80 52%,#bcb5e19c);
+  box-shadow:inset 0 -7px 15px #ffffff8c,0 8px 20px #67618b17;
+  font-size:1.22rem;font-weight:850;
+  animation:bob 4s ease-in-out infinite;
+}
+.art-bubble.a{left:16%;top:44px;transform:rotate(-13deg)}
+.art-bubble.b{left:calc(50% - 47px);top:12px;width:94px;height:94px;background:radial-gradient(circle at 30% 20%,white,#f3d8d794);animation-delay:-1s}
+.art-bubble.c{right:15%;top:50px;background:radial-gradient(circle at 30% 20%,white,#c2e4d594);animation-delay:-2s}
+@keyframes bob{50%{translate:0 -9px}}
+.modal-copy{padding:26px 30px 30px}
+.modal-copy h2{font-size:1.85rem;line-height:1.25;margin:7px 0 15px}
+.modal-copy p{color:#54676a;margin:10px 0;font-size:.97rem}
+.modal-copy strong{color:#2b574a}
+.modal-copy .big-word{font-size:3rem;font-weight:950;letter-spacing:.09em;line-height:1.3;color:var(--purple)}
+.rule-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0}
+.rule{
+  padding:12px 5px;text-align:center;background:#f0f0e9;
+  border-radius:15px;color:#52645f;font-size:.75rem;
+}
+.rule b{display:block;font-size:1.55rem;color:#355a50;line-height:1.25}
+.edu{
+  border:1px solid #dfdbba;background:#f6f2df;
+  padding:13px 15px;border-radius:15px;font-size:.87rem;color:#685f3d;
+  margin:16px 0;
+}
+.primary{
+  display:block;width:100%;border:none;border-radius:16px;
+  background:#315f52;color:white;font-size:1.05rem;font-weight:850;
+  padding:15px 20px;min-height:52px;
+  box-shadow:0 6px 0 #24483e,0 10px 20px #315f5215;
+  transition:transform .15s,background .15s;
+}
+.primary:hover{background:#3d7363}
+.primary:active{transform:translateY(3px);box-shadow:0 3px 0 #24483e}
+.modal-small{text-align:center!important;font-size:.72rem!important;margin-top:14px!important}
+.type-tag{
+  display:inline-block;padding:4px 11px;border-radius:99px;
+  background:#e8e2f2;color:#624b8f;font-weight:850;font-size:.85rem;
+}
+.definition{background:white;border:1px solid #e4e7df;border-radius:17px;padding:16px;margin:16px 0}
+.definition small{font-size:.7rem;letter-spacing:.1em;color:#7c8780}
+.definition p{font-size:1.12rem;color:#374d55;margin-bottom:0}
+.final-number{font-size:4.5rem;font-weight:950;line-height:1.15;color:var(--mint)}
+.final-number small{font-size:1.2rem;margin-left:5px}
+.help-list{padding-left:21px;color:#52656a;font-size:.94rem}
+.help-list li{margin:10px 0}
+body.calm *,body.calm *::before,body.calm *::after{
+  animation:none!important;transition:none!important;
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+@media(min-width:1400px){.shell{padding-top:35px}}
+@media(max-width:960px){
+  .main-grid{grid-template-columns:240px minmax(0,1fr);gap:16px}
+  .mission{padding:19px}
+  .intro h2{font-size:2.1rem}
+  .shell{padding:18px}
+  .volume{display:none}
+  .hud{gap:8px;padding:8px 3px 16px}
+  .metric{gap:7px}
+  .metric-icon{display:none}
+}
+@media(max-width:700px){
+  .shell{padding:12px}
+  .topbar{gap:12px;margin-bottom:15px;flex-wrap:wrap}
+  .brand-mark{width:43px;height:43px;font-size:24px;border-radius:15px}
+  .brand h1{font-size:1.12rem}
+  .brand .eyebrow{font-size:.55rem}
+  .tools{gap:5px}
+  .tool{font-size:.73rem;padding:7px 9px;min-height:40px}
+  .main-grid{grid-template-columns:1fr;gap:12px}
+  .sidebar{display:grid;grid-template-columns:1fr;gap:10px}
+  .intro{padding:0}
+  .intro h2,.intro>p,.intro>.eyebrow{display:none}
+  .stage-list{grid-template-columns:repeat(3,1fr);gap:5px;margin:0}
+  .stage{padding:7px;gap:7px;border-radius:13px}
+  .stage .num{width:25px;height:25px;font-size:.7rem;flex-shrink:0}
+  .stage strong{font-size:.75rem}
+  .stage small{display:none}
+  .mission{
+    padding:13px 16px;display:grid;
+    grid-template-columns:1fr auto;column-gap:12px;align-items:center;border-radius:18px;
+  }
+  .mission-label{font-size:.69rem}
+  .mission-word{font-size:2rem;margin:2px 0 0}
+  .mission-sub{font-size:.76rem;grid-column:2;grid-row:1 / span 2;text-align:right}
+  .target-pill{font-size:.7rem}
+  .switch-box{grid-column:1 / -1;margin-top:9px;padding:7px 10px;font-size:.75rem}
+  .switch-box strong{display:inline;margin-left:7px;font-size:.94rem}
+  .switch-track{margin-top:4px;height:3px}
+  .note{display:none}
+  .board{padding:9px;border-radius:23px}
+  .hud{padding:4px 6px 12px;grid-template-columns:.8fr .8fr 1fr}
+  .metric strong{font-size:1.5rem}
+  .metric small{font-size:.64rem}
+  .energy i{width:15px}
+  .aquarium{height:clamp(345px,53svh,550px);border-radius:17px}
+  .watermark{left:14px;top:16px;font-size:.52rem}
+  .tank-label{right:11px;top:11px;font-size:.61rem}
+  .board-footer{font-size:.65rem;padding:9px 5px 1px}
+  .collection{gap:10px;margin-top:15px}
+  .collection-title{min-width:68px;font-size:.75rem}
+  .word-chip{font-size:.74rem;padding:5px 9px;border-radius:9px}
+  .modal-copy{padding:23px}
+  .modal-copy h2{font-size:1.65rem}
+}
+@media(max-width:380px){
+  .tools{width:100%}
+  .mission-word{font-size:1.8rem}
+  .tank-label{display:none}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">🫧</div>
+      <div>
+        <h1>情緒漂流所</h1>
+        <div class="eyebrow">Feelings, in little bubbles</div>
+      </div>
+    </div>
+    <div class="tools" aria-label="遊戲設定">
+      <button class="tool" id="soundBtn" aria-pressed="true">♫ 音效開</button>
+      <label class="volume">音量
+        <input id="volume" type="range" min="0" max="100" value="30" aria-label="音效音量">
+      </label>
+      <button class="tool" id="motionBtn" aria-pressed="true">≈ 漂浮開</button>
+      <button class="tool" id="pauseBtn" disabled>Ⅱ 暫停</button>
+      <button class="tool" id="helpBtn" aria-label="查看玩法">？玩法</button>
+    </div>
+  </header>
+
+  <main class="main-grid">
+    <aside class="sidebar">
+      <section class="intro">
+        <div class="eyebrow">A little space for every feeling</div>
+        <h2>每一種情緒，<br>都值得<span>認識。</span></h2>
+        <p>輕輕點一下，發現泡泡裏的心情。</p>
+        <nav class="stage-list" aria-label="關卡進度">
+          <div class="stage active" data-stage="1">
+            <span class="num">01</span>
+            <div><strong>認識情緒</strong><small>辨認負面情緒</small></div>
+          </div>
+          <div class="stage" data-stage="2">
+            <span class="num">02</span>
+            <div><strong>轉換焦點</strong><small>跟隨任務切換</small></div>
+          </div>
+          <div class="stage" data-stage="3">
+            <span class="num">03</span>
+            <div><strong>探索更多</strong><small>加入延伸詞語</small></div>
+          </div>
+        </nav>
+      </section>
+
+      <section class="mission" aria-label="當前捕捉任務">
+        <div class="mission-label">◎ 現在請捕捉</div>
+        <h2 class="mission-word" id="targetWord">負面情緒</h2>
+        <p class="mission-sub">
+          <span class="target-pill" id="targetTag">負面任務</span><br>
+          看清<strong>詞語</strong>再點選
+        </p>
+        <div class="switch-box" id="switchBox">
+          <span id="switchPrefix">第一關</span>
+          <strong id="switchText">本關任務不會切換</strong>
+          <div class="switch-track" id="switchTrack" hidden>
+            <div class="switch-fill" id="switchFill"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="note">
+        <span aria-hidden="true">🌱</span>
+        <div><strong>情緒沒有好壞之分</strong><br>
+          泡泡是辨認練習，不代表要消滅情緒。
+          難過、害怕或生氣，都可以被理解。
+        </div>
+      </div>
+    </aside>
+
+    <section class="board" aria-label="情緒泡泡遊戲">
+      <div class="hud">
+        <div class="metric" id="timerBox">
+          <div class="metric-icon" aria-hidden="true">◷</div>
+          <div><small id="timerLabel">剩餘時間</small><strong id="time">60</strong><em>秒</em></div>
+        </div>
+        <div class="metric">
+          <div class="metric-icon" aria-hidden="true">✦</div>
+          <div><small>情緒探索分</small><strong id="score">0</strong></div>
+        </div>
+        <div class="metric">
+          <div style="width:100%">
+            <small>本關成功捕捉</small>
+            <strong id="progress">0</strong><em>／8</em>
+            <div class="energy" id="energy" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="aquarium" id="tank">
+        <div class="watermark"><span class="live"></span>EMOTION OBSERVATORY</div>
+        <div class="tank-label" id="tankLabel">NO. 01 · 情緒觀察中</div>
+
+        <svg class="seabed" viewBox="0 0 800 190"
+             preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 110 Q170 55 350 120 T800 90 V190 H0Z"
+                fill="#c1d9d0"/>
+          <path d="M0 145 Q220 105 420 142 T800 128 V190 H0Z"
+                fill="#aecdc5"/>
+          <path d="M0 169 Q200 142 440 165 T800 154 V190 H0Z"
+                fill="#9ebfb6"/>
+          <g fill="none" stroke-linecap="round">
+            <path d="M55 160 Q15 110 48 65 M55 157 Q93 120 84 92"
+                  stroke="#6eaa97" stroke-width="11"/>
+            <path d="M95 170 Q65 141 104 113" stroke="#87b49e" stroke-width="9"/>
+            <path d="M723 165 Q695 110 731 70 M725 143 Q759 117 762 93"
+                  stroke="#7eab9f" stroke-width="12"/>
+            <path d="M682 176 Q710 139 682 118" stroke="#99b8ac" stroke-width="10"/>
+          </g>
+          <ellipse cx="625" cy="175" rx="39" ry="12" fill="#d8d5db"/>
+          <ellipse cx="665" cy="180" rx="24" ry="9" fill="#c6c4d0"/>
+          <ellipse cx="151" cy="179" rx="26" ry="9" fill="#e0ded0"/>
+        </svg>
+
+        <div class="bubble-layer" id="bubbleLayer"
+             role="group" aria-label="點選符合任務的情緒泡泡"></div>
+        <canvas id="fx" aria-hidden="true"></canvas>
+        <div id="combo" class="combo" hidden></div>
+        <div class="tank-hint" id="tankHint">泡泡顏色只是裝飾，請閱讀情緒詞語</div>
+      </div>
+
+      <div class="board-footer">
+        <span>✦ 答對 <strong>＋10</strong>　答錯 <strong>－1</strong></span>
+        <span id="statusText">準備好，一起認識情緒。</span>
+      </div>
+    </section>
+  </main>
+
+  <section class="collection" aria-label="已認識的情緒詞語">
+    <div class="collection-title">
+      情緒圖鑑
+      <small>DISCOVERIES</small>
+    </div>
+    <div class="collection-list" id="collection"></div>
+  </section>
+
+  <footer>每一種情緒都有它的訊息。需要幫忙時，可以找家人或老師傾訴。</footer>
+</div>
+
+<div id="announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+<dialog id="modal" aria-labelledby="modalTitle">
+  <div class="modal-art" aria-hidden="true">
+    <div class="art-orbit"></div><div class="art-orbit two"></div>
+    <div class="art-bubble a">認識</div>
+    <div class="art-bubble b">感受</div>
+    <div class="art-bubble c">接納</div>
+  </div>
+  <div class="modal-copy">
+    <div class="eyebrow" id="modalEyebrow">WELCOME TO YOUR FEELINGS</div>
+    <h2 id="modalTitle"></h2>
+    <div id="modalBody"></div>
+    <button id="modalBtn" class="primary" type="button"></button>
+    <p class="modal-small" id="modalFoot"></p>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+
+/* ---------- 情緒資料 ---------- */
+
+const BASIC = [
+  {word:"滿足",type:"positive",desc:"心願得到實現，心裏感到滿意和充實。"},
+  {word:"感激",type:"positive",desc:"別人幫助你或對你好，令你心懷感謝。"},
+  {word:"期待",type:"positive",desc:"對未來的事情抱有希望，盼望它發生。"},
+  {word:"欣賞",type:"positive",desc:"以讚賞的心態，喜愛或體會人、事、物的美好。"},
+  {word:"失望",type:"negative",desc:"期待的事情沒有實現，心裏感到難過或落空。"},
+  {word:"憤怒",type:"negative",desc:"遇到不公平或令人生氣的事情時，產生的強烈情緒。"},
+  {word:"緊張",type:"negative",desc:"面對考驗、壓力或未知的事情時，身體和心裏感到不安。"},
+  {word:"害怕",type:"negative",desc:"遇到危險或令你擔心的事物時，產生恐懼的感受。"}
+];
+const EXTRA = [
+  {word:"興奮",type:"positive",desc:"情緒高漲，感到很雀躍、很有精神。"},
+  {word:"喜悅",type:"positive",desc:"內心感到歡樂和高興。"},
+  {word:"焦慮",type:"negative",desc:"對事情感到擔心，心神不寧，有時身體也會繃緊。"},
+  {word:"孤單",type:"negative",desc:"感到缺少陪伴、關懷，或覺得沒有人明白自己。"}
+];
+const ALL = [...BASIC,...EXTRA];
+const LABEL = {positive:"正面情緒",negative:"負面情緒"};
+const COLORS = ["#b4d9f2","#e5b7d3","#cbbcea","#f1d89f","#a9d9c6","#efbfba"];
+const LEVEL_NAMES = ["認識情緒","轉換焦點","探索更多"];
+const TARGET = 8;
+
+/* ---------- 聲音：Web Audio 合成 ---------- */
+
+let audio = null;
+let master = null;
+let soundOn = true;
+let volume = .30;
+
+function unlockAudio(){
+  if(!soundOn) return;
+  try{
+    const AudioClass = window.AudioContext || window.webkitAudioContext;
+    if(!AudioClass) return;
+    if(!audio){
+      audio = new AudioClass();
+      master = audio.createGain();
+      master.gain.value = volume;
+      master.connect(audio.destination);
+    }
+    if(audio.state === "suspended") audio.resume().catch(()=>{});
+  }catch{}
+}
+function note(freq,duration=.16,delay=0,type="sine",endFreq){
+  if(!soundOn || !audio || !master) return;
+  try{
+    const osc = audio.createOscillator();
+    const gain = audio.createGain();
+    const t = audio.currentTime + delay;
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq,t);
+    if(endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq,t+duration);
+    gain.gain.setValueAtTime(.0001,t);
+    gain.gain.exponentialRampToValueAtTime(.22,t+.012);
+    gain.gain.exponentialRampToValueAtTime(.0001,t+duration);
+    osc.connect(gain);
+    gain.connect(master);
+    osc.start(t);
+    osc.stop(t+duration+.03);
+    osc.onended=()=>{osc.disconnect();gain.disconnect();};
+  }catch{}
+}
+function sound(type){
+  if(!soundOn) return;
+  unlockAudio();
+  if(type==="tap") note(640,.075,0,"sine",810);
+  if(type==="pop"){
+    note(410,.13,0,"sine",980);
+    note(1175,.10,.055);
+  }
+  if(type==="wrong"){
+    note(392,.19);
+    note(330,.22,.15);
+  }
+  if(type==="warn"){
+    note(659,.11);
+    note(659,.13,.2);
+  }
+  if(type==="switch"){
+    note(523,.15);
+    note(784,.22,.11);
+  }
+  if(type==="combo"){
+    [784,988,1175].forEach((f,i)=>note(f,.18,i*.085));
+  }
+  if(type==="start"){
+    [392,523,659,784].forEach((f,i)=>note(f,.22,i*.09));
+  }
+  if(type==="win"){
+    [523,659,784,1047].forEach((f,i)=>note(f,.3,i*.12));
+  }
+}
+
+/* ---------- 設定與遊戲狀態 ---------- */
+
+const motionQuery = matchMedia("(prefers-reduced-motion: reduce)");
+let motionOn = !motionQuery.matches;
+
+const state = {
+  level:1, score:0, progress:0,
+  time:60, target:"negative",
+  running:false, paused:true,
+  combo:0, bestCombo:0,
+  levelBase:0, totalHits:0, wrongHits:0,
+  switchLeft:6, switchTotal:6, warned:false,
+  spawnIn:0, discovered:new Set()
+};
+
+const tank = $("tank");
+const layer = $("bubbleLayer");
+const canvas = $("fx");
+const ctx = canvas.getContext("2d");
+
+let width=0, height=0, size=94, lanes=4;
+let bubbles=[];
+let particles=[];
+let rings=[];
+let comboLeft=0;
+let modalAction=null;
+let modalKind="";
+let lastFrame=0;
+
+function announce(text){$("announcer").textContent=text;}
+
+function resize(){
+  width=tank.clientWidth;
+  height=tank.clientHeight;
+  size=width<420 ? 82 : width<650 ? 94 : 104;
+  lanes=Math.max(2,Math.floor((width-18)/(size+13)));
+
+  const dpr=Math.min(devicePixelRatio||1,2);
+  canvas.width=Math.round(width*dpr);
+  canvas.height=Math.round(height*dpr);
+  if(ctx) ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  // 重新排列，避免轉屏後泡泡出界或疊在一起。
+  if(state.running){
+    clearBubbles();
+    seedBubbles();
+  }
+}
+new ResizeObserver(resize).observe(tank);
+
+function updateMotion(){
+  document.body.classList.toggle("calm",!motionOn);
+  $("motionBtn").textContent=motionOn?"≈ 漂浮開":"◎ 靜態泡泡";
+  $("motionBtn").setAttribute("aria-pressed",String(motionOn));
+  $("tankHint").textContent=motionOn
+    ?"泡泡顏色只是裝飾，請閱讀情緒詞語"
+    :"靜態模式：泡泡不會移動，請點選詞語";
+}
+function clearBubbles(){
+  layer.replaceChildren();
+  bubbles=[];
+}
+function clearEffects(){
+  particles=[];rings=[];
+  tank.querySelectorAll(".float-score").forEach(el=>el.remove());
+  $("combo").hidden=true;
+  comboLeft=0;
+  if(ctx) ctx.clearRect(0,0,width,height);
+}
+
+function updateCollection(){
+  $("collection").innerHTML=ALL.map((e,i)=>{
+    const found=state.discovered.has(e.word);
+    return `<span class="word-chip ${found?"found":""} ${i>=8?"extra":""}"
+      aria-label="${e.word}，${found?"已認識":"未收錄"}">
+      <b aria-hidden="true">${found?"✓":"○"}</b>${e.word}
+    </span>`;
+  }).join("");
+}
+
+function updateHUD(){
+  $("score").textContent=state.score;
+  $("progress").textContent=state.progress;
+  $("time").textContent=Math.ceil(state.time);
+  $("timerBox").classList.toggle("warning",state.time<=10);
+  $("timerLabel").textContent=state.time<=10?"最後 10 秒":"剩餘時間";
+  $("energy").innerHTML=Array.from({length:8},(_,i)=>
+    `<i class="${i<state.progress?"filled":""}"></i>`
+  ).join("");
+  document.querySelectorAll(".stage").forEach(el=>{
+    const n=Number(el.dataset.stage);
+    el.classList.toggle("active",n===state.level);
+    el.classList.toggle("done",n<state.level);
+    if(n===state.level) el.setAttribute("aria-current","step");
+    else el.removeAttribute("aria-current");
+    el.querySelector(".num").textContent=n<state.level?"✓":String(n).padStart(2,"0");
+  });
+  $("tankLabel").textContent=`NO. 0${state.level} · ${LEVEL_NAMES[state.level-1]}`;
+}
+
+function setTarget(type,speak=true){
+  state.target=type;
+  document.documentElement.style.setProperty("--accent",
+    type==="negative"?"#a44762":"#28705c");
+  document.documentElement.style.setProperty("--accent-soft",
+    type==="negative"?"#ffedf2":"#e5f3e8");
+  $("targetWord").textContent=LABEL[type];
+  $("targetTag").textContent=type==="negative"?"負面任務":"正面任務";
+  if(speak) announce("任務切換：現在請捕捉"+LABEL[type]+"。");
+}
+
+function resetSwitch(){
+  state.switchTotal=5+Math.random()*3;
+  state.switchLeft=state.switchTotal;
+  state.warned=false;
+}
+function updateSwitchUI(){
+  const warning=state.level>1 && state.switchLeft<=1.5;
+  $("switchBox").classList.toggle("warning",warning);
+  $("switchTrack").hidden=state.level===1;
+
+  if(state.level===1){
+    $("switchPrefix").textContent="第一關";
+    $("switchText").textContent="本關任務不會切換";
+  }else if(warning){
+    const next=state.target==="negative"?"positive":"negative";
+    $("switchPrefix").textContent=`⚠ ${Math.ceil(state.switchLeft)} 秒後切換`;
+    $("switchText").textContent=`即將捕捉${LABEL[next]}`;
+  }else{
+    $("switchPrefix").textContent="下一次切換";
+    $("switchText").textContent=`約 ${Math.ceil(state.switchLeft)} 秒後`;
+  }
+  const percent=100*(1-state.switchLeft/state.switchTotal);
+  $("switchFill").style.width=clamp(percent,0,100)+"%";
+}
+
+/* ---------- 玻璃泡泡 ---------- */
+
+function laneX(lane){
+  const laneWidth=(width-16)/lanes;
+  return 8+lane*laneWidth+(laneWidth-size)/2;
+}
+function emotionForBubble(){
+  const pool=state.level===3?ALL:BASIC;
+  // 場上沒有當前目標時，優先補充可答的泡泡。
+  const hasTarget=bubbles.some(b=>b.emotion.type===state.target);
+  const targetType=!hasTarget ? state.target :
+    (Math.random()<.6 ? state.target :
+      state.target==="negative"?"positive":"negative");
+  return pick(pool.filter(e=>e.type===targetType));
+}
+function createBubble(lane,y){
+  const emotion=emotionForBubble();
+  const el=document.createElement("button");
+  el.type="button";
+  el.className="bubble";
+  el.style.setProperty("--size",size+"px");
+  el.style.setProperty("--bubble-color",pick(COLORS));
+  el.innerHTML=`<span>${emotion.word}</span>`;
+  el.setAttribute("aria-label",emotion.word);
+
+  const b={
+    el,emotion,lane,x:laneX(lane),y,
+    speed:18+Math.random()*12+state.level*3,
+    age:0,phase:Math.random()*6.28,hover:false,focused:false
+  };
+
+  el.addEventListener("pointerenter",()=>{b.hover=true;});
+  el.addEventListener("pointerleave",()=>{b.hover=false;});
+  el.addEventListener("focus",()=>{b.focused=true;});
+  el.addEventListener("blur",()=>{b.focused=false;});
+  // 使用原生 click，同時支援觸控、滑鼠、Enter 和空白鍵。
+  el.addEventListener("click",()=>hit(b));
+  layer.append(el);
+  bubbles.push(b);
+  positionBubble(b);
+}
+function positionBubble(b){
+  const wobble=motionOn && !b.hover && !b.focused
+    ? Math.sin(b.age*1.6+b.phase)*4 : 0;
+  b.el.style.left=(b.x+wobble)+"px";
+  b.el.style.top=b.y+"px";
+}
+function seedBubbles(){
+  const top=64;
+  const bottom=Math.max(top,height-size-50);
+  for(let lane=0;lane<lanes;lane++){
+    createBubble(lane,clamp(height*.34+(lane%2)*size*.85,top,bottom));
+  }
+}
+function spawnBubble(){
+  if(!motionOn){
+    const rows=Math.max(1,Math.floor((height-100)/(size+20)));
+    const slots=[];
+    for(let l=0;l<lanes;l++){
+      for(let r=0;r<rows;r++){
+        const y=64+r*(size+20);
+        if(!bubbles.some(b=>b.lane===l && Math.abs(b.y-y)<size+12)){
+          slots.push({lane:l,y});
+        }
+      }
+    }
+    if(slots.length){
+      const p=pick(slots);
+      createBubble(p.lane,p.y);
+    }else if(!bubbles.some(b=>b.emotion.type===state.target)){
+      const removable=bubbles.find(b=>!b.focused&&!b.hover);
+      if(removable){
+        const {lane,y}=removable;
+        removeBubble(removable);
+        createBubble(lane,y);
+      }
+    }
+    return;
+  }
+
+  const y=height-size-18;
+  const free=[];
+  for(let lane=0;lane<lanes;lane++){
+    if(!bubbles.some(b=>b.lane===lane&&Math.abs(b.y-y)<size+30)){
+      free.push(lane);
+    }
+  }
+  if(free.length) createBubble(pick(free),y);
+}
+function removeBubble(b){
+  b.el.remove();
+  const i=bubbles.indexOf(b);
+  if(i>=0) bubbles.splice(i,1);
+}
+
+/* ---------- 漣漪、星點、浮動分數 ---------- */
+
+function burst(x,y,good=true,big=false){
+  if(!motionOn) return;
+  rings.push({x,y,r:10,life:1,color:good?"#ffffff":"#bd85a7"});
+  const colors=good
+    ?["#ffffff","#f5e0a0","#a08ac6","#75ad99"]
+    :["#ffffff","#d4b6dd","#e2c5ac"];
+  for(let i=0;i<(big?65:22);i++){
+    const a=Math.random()*Math.PI*2;
+    const speed=35+Math.random()*(big?210:130);
+    particles.push({
+      x,y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,
+      life:1,size:2+Math.random()*4,color:pick(colors),
+      star:i%3===0
+    });
+  }
+}
+function floatingScore(x,y,text){
+  if(!motionOn) return;
+  const el=document.createElement("span");
+  el.className="float-score";
+  el.textContent=text;
+  el.style.left=x+"px";el.style.top=y+"px";
+  tank.append(el);
+  setTimeout(()=>el.remove(),950);
+}
+function drawEffects(dt){
+  if(!ctx) return;
+  ctx.clearRect(0,0,width,height);
+  if(!motionOn){particles=[];rings=[];return;}
+
+  for(let i=rings.length-1;i>=0;i--){
+    const r=rings[i];
+    r.life-=dt*1.7;r.r+=dt*95;
+    if(r.life<=0){rings.splice(i,1);continue;}
+    ctx.globalAlpha=r.life;
+    ctx.strokeStyle=r.color;ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,Math.PI*2);ctx.stroke();
+  }
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];
+    p.life-=dt*1.2;
+    if(p.life<=0){particles.splice(i,1);continue;}
+    p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=60*dt;
+    ctx.globalAlpha=p.life;
+    ctx.fillStyle=p.color;
+    ctx.beginPath();
+    if(p.star){
+      ctx.moveTo(p.x,p.y-p.size*1.7);
+      ctx.lineTo(p.x+p.size*.55,p.y);
+      ctx.lineTo(p.x,p.y+p.size*1.7);
+      ctx.lineTo(p.x-p.size*.55,p.y);
+      ctx.closePath();
+    }else ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha=1;
+}
+
+/* ---------- 對話框與暫停 ---------- */
+
+function showModal(title,html,button,action,kind="info",eyebrow="A MOMENT TO DISCOVER"){
+  state.paused=true;
+  $("pauseBtn").disabled=true;
+  modalAction=action;
+  modalKind=kind;
+  $("modalTitle").textContent=title;
+  $("modalBody").innerHTML=html;
+  $("modalBtn").textContent=button;
+  $("modalEyebrow").textContent=eyebrow;
+  $("modalFoot").textContent=state.running
+    ?"閱讀期間，倒數與任務切換已暫停。"
+    :"所有情緒都值得被認識與接納。";
+  if(!$("modal").open) $("modal").showModal();
+  $("modalBtn").focus({preventScroll:true});
+}
+function activateModal(){
+  const action=modalAction;
+  modalAction=null;
+  $("modal").close();
+  unlockAudio();
+  if(action) action();
+}
+$("modalBtn").addEventListener("click",activateModal);
+$("modal").addEventListener("cancel",event=>{
+  event.preventDefault();
+  // Escape 只關閉可返回遊戲的說明，不跳過關卡流程。
+  if(["pause","help","wrong"].includes(modalKind)) activateModal();
+});
+function resume(){
+  if(!state.running) return;
+  state.paused=false;
+  $("pauseBtn").disabled=false;
+  $("statusText").textContent="看清任務，再捕捉泡泡。";
+  lastFrame=performance.now();
+  sound("tap");
+}
+function pause(){
+  if(!state.running||state.paused) return;
+  showModal("慢慢來，休息一下。",
+    `<p>泡泡、倒數和任務切換都停下來了。</p>
+     <div class="definition">
+       <small>返回後的任務</small>
+       <p>捕捉 <strong>${LABEL[state.target]}</strong></p>
+     </div>
+     <p>還有 <strong>${Math.ceil(state.time)} 秒</strong>，
+     已捕捉 <strong>${state.progress}／8</strong> 個目標泡泡。</p>`,
+    "回到泡泡池 →",resume,"pause","TAKE A LITTLE BREAK");
+}
+
+/* ---------- 遊戲流程 ---------- */
+
+function welcome(){
+  showModal("今天，一起認識心情。",
+    `<p>歡迎來到<strong>情緒漂流所</strong>。
+      看清任務，點選符合類別的情緒泡泡。</p>
+     <div class="rule-grid">
+       <div class="rule"><b>3</b>探索關卡</div>
+       <div class="rule"><b>60</b>每關秒數</div>
+       <div class="rule"><b>8</b>答對即過關</div>
+     </div>
+     <div class="edu">
+       <strong>🌱 小提醒</strong><br>
+       感到憤怒、緊張或害怕很正常。
+       捕捉泡泡只是辨認練習，<strong>不是消滅情緒</strong>。
+     </div>
+     <p style="font-size:.83rem">泡泡的顏色是隨機裝飾，並不是答案提示。</p>`,
+    "開始漂流　↗",newGame,"welcome","YOUR FEELINGS ARE WELCOME");
+}
+function newGame(){
+  state.score=0;state.levelBase=0;
+  state.discovered.clear();
+  state.totalHits=0;state.wrongHits=0;state.bestCombo=0;
+  updateCollection();
+  startLevel(1);
+}
+function startLevel(level){
+  state.level=level;
+  state.levelBase=state.score;
+  state.progress=0;state.time=60;state.combo=0;
+  state.running=true;state.paused=false;
+  state.spawnIn=.7;
+  clearBubbles();clearEffects();
+  setTarget("negative",false);
+  resetSwitch();
+  updateSwitchUI();updateHUD();
+  seedBubbles();
+  $("pauseBtn").disabled=false;
+  $("statusText").textContent="看清任務，再捕捉泡泡。";
+  lastFrame=performance.now();
+  announce(`第${level}關開始。請捕捉負面情緒。`);
+  sound("start");
+}
+function introduceLevel(level){
+  const text=level===2
+    ?`這一關會在<strong>正面情緒</strong>和<strong>負面情緒</strong>之間切換。
+      切換前會有<strong>倒數及音效提示</strong>。`
+    :`延續任務切換，並加入
+      <strong>興奮、喜悅、焦慮、孤單</strong>四個新詞語。`;
+  showModal(`第 ${level} 關・${LEVEL_NAMES[level-1]}`,
+    `<p>${text}</p>
+     <div class="edu">
+       <strong>🎯 以大字任務為準</strong><br>
+       預警期間，仍然按<strong>目前的大字任務</strong>作答；
+       等大字更新後，才改捕捉另一類情緒。
+     </div>
+     <p>本關有 <strong>60 秒</strong>，答對 <strong>8 次</strong>便過關。</p>`,
+    `開始第 ${level} 關 →`,()=>startLevel(level),"level","A NEW CHAPTER");
+}
+function hit(b){
+  if(!state.running||state.paused||!bubbles.includes(b)) return;
+  unlockAudio();
+  const x=b.x+size/2,y=b.y+size/2;
+  const emotion=b.emotion;
+  const hadFocus=document.activeElement===b.el;
+  const correct=emotion.type===state.target;
+
+  removeBubble(b);
+  state.totalHits++;
+  state.discovered.add(emotion.word);
+  updateCollection();
+
+  if(correct){
+    state.score+=10;state.progress++;state.combo++;
+    state.bestCombo=Math.max(state.bestCombo,state.combo);
+    burst(x,y,true);
+    floatingScore(x,y,"＋10");
+    sound(state.combo%3===0?"combo":"pop");
+    $("statusText").textContent=`✓ ${emotion.word}：${LABEL[emotion.type]} ＋10`;
+    announce(`答對！${emotion.word}屬於${LABEL[emotion.type]}。本關${state.progress}／8。`);
+
+    if(state.combo>=3){
+      $("combo").textContent=`✦ 連續辨認成功 × ${state.combo}`;
+      $("combo").hidden=false;
+      comboLeft=1.8;
+    }
+    updateHUD();
+    if(state.progress>=TARGET){
+      completeLevel();
+    }else if(hadFocus && bubbles.length){
+      bubbles[0].el.focus({preventScroll:true});
+    }
+  }else{
+    state.score=Math.max(0,state.score-1);
+    state.combo=0;state.wrongHits++;
+    $("combo").hidden=true;
+    burst(x,y,false);
+    sound("wrong");
+    updateHUD();
+    $("statusText").textContent=`再認識一下「${emotion.word}」。`;
+
+    const tip=emotion.type==="negative"
+      ?`感到${emotion.word}時，可以先慢慢呼吸，試試唱歌、做運動、
+        適當休息或找信任的人傾訴。感受持續困擾你時，記得向家人或老師求助。`
+      :"你可以留意這份感受，也可以和別人分享。情緒會隨情境改變，各種感受都值得被理解。";
+
+    showModal("停一停，認識這份感受。",
+      `<div class="big-word">${emotion.word}</div>
+       <span class="type-tag">本遊戲分類：${LABEL[emotion.type]}</span>
+       <div class="definition">
+         <small>這個詞語的意思是</small>
+         <p>${emotion.desc}</p>
+       </div>
+       <p>剛才的任務是捕捉 <strong>${LABEL[state.target]}</strong>。
+       這次扣 <strong>1 分</strong>，得分最低為 0。</p>
+       <div class="edu">🌱 ${tip}</div>`,
+      "我明白了，繼續探索 →",resume,"wrong","EMOTION FIELD NOTES");
+  }
+}
+function completeLevel(){
+  state.running=false;state.paused=true;
+  sound("win");
+  burst(width/2,height*.4,true,true);
+
+  if(state.level<3){
+    const next=state.level+1;
+    showModal(`第 ${state.level} 關完成！`,
+      `<p>你已完成 <strong>8 次正確辨認</strong>，又認識多一點自己的心情。</p>
+       <div class="rule-grid">
+         <div class="rule"><b>${state.score}</b>累積得分</div>
+         <div class="rule"><b>${Math.ceil(state.time)}</b>剩餘秒數</div>
+         <div class="rule"><b>${state.discovered.size}</b>已認識詞語</div>
+       </div>
+       <div class="edu">下一站：<strong>${LEVEL_NAMES[next-1]}</strong></div>`,
+      "前往下一站 →",()=>introduceLevel(next),"complete","A LITTLE MOMENT TO CELEBRATE");
+  }else{
+    showModal("把理解，帶回生活裏。",
+      `<p>三個關卡完成！這是你的情緒探索紀錄。</p>
+       <div class="final-number">${state.score}<small>分</small></div>
+       <div class="rule-grid">
+         <div class="rule"><b>3／3</b>完成關卡</div>
+         <div class="rule"><b>${state.discovered.size}</b>認識詞語</div>
+         <div class="rule"><b>${state.bestCombo}</b>最高連續答對</div>
+       </div>
+       <div class="edu">
+         <strong>今天的心情，也值得被聆聽。</strong><br>
+         你現在有甚麼感受？可以試着用一個情緒詞語說出來，
+         和家人、老師或朋友分享。
+       </div>`,
+      "再展開一次漂流 ↗",newGame,"finish","YOU MADE ROOM FOR YOUR FEELINGS");
+  }
+}
+function timeOut(){
+  state.running=false;state.paused=true;
+  sound("wrong");
+  const level=state.level;
+  showModal("時間到，下次再試試。",
+    `<p>你在這一關成功捕捉了 <strong>${state.progress}／8</strong> 個目標泡泡。</p>
+     <div class="edu">
+       <strong>小技巧</strong><br>
+       先讀清楚大字任務，再看泡泡裏的詞語。
+       想看得更清楚，可以切換成<strong>靜態泡泡</strong>。
+     </div>
+     <p style="font-size:.85rem">
+       重試會恢復本關開始前的得分，情緒圖鑑則會保留。
+     </p>`,
+    "重新挑戰本關 →",()=>{
+      state.score=state.levelBase;
+      startLevel(level);
+    },"timeout","EVERY TRY IS A NEW DISCOVERY");
+}
+
+/* ---------- 單一動畫循環：暫停時所有遊戲時間同步停止 ---------- */
+
+function tick(now){
+  if(!lastFrame) lastFrame=now;
+  const elapsed=(now-lastFrame)/1000;
+  const dt=Math.min(elapsed,.05);
+  lastFrame=now;
+
+  if(state.running&&!state.paused){
+    // 倒數採用實際經過時間，不依賴畫面更新次數。
+    state.time=Math.max(0,state.time-elapsed);
+    $("time").textContent=Math.ceil(state.time);
+    $("timerBox").classList.toggle("warning",state.time<=10);
+    $("timerLabel").textContent=state.time<=10?"最後 10 秒":"剩餘時間";
+
+    if(state.time<=0){
+      timeOut();
+    }else{
+      if(state.level>1){
+        state.switchLeft-=elapsed;
+
+        if(state.switchLeft<=1.5&&!state.warned){
+          state.warned=true;
+          sound("warn");
+          const next=state.target==="negative"?"positive":"negative";
+          announce(`準備切換至${LABEL[next]}。目前仍捕捉${LABEL[state.target]}。`);
+        }
+        if(state.switchLeft<=0){
+          setTarget(state.target==="negative"?"positive":"negative");
+          resetSwitch();
+          sound("switch");
+          $("statusText").textContent="任務已更新："+LABEL[state.target];
+        }
+        updateSwitchUI();
+      }
+
+      state.spawnIn-=dt;
+      if(state.spawnIn<=0){
+        spawnBubble();
+        state.spawnIn=motionOn?.8:.5;
+      }
+
+      // 由上至下更新，讓同一航道的泡泡保持間距。
+      const ordered=bubbles.slice().sort((a,b)=>a.y-b.y);
+      for(const b of ordered){
+        b.age+=dt;
+        if(motionOn&&!b.hover&&!b.focused){
+          let nextY=b.y-b.speed*dt;
+          const ahead=bubbles.filter(other=>
+            other!==b&&other.lane===b.lane&&other.y<b.y
+          ).sort((a,c)=>c.y-a.y)[0];
+          if(ahead) nextY=Math.max(nextY,ahead.y+size+12);
+          b.y=nextY;
+        }
+        positionBubble(b);
+        if(b.y < -size-5) removeBubble(b);
+      }
+
+      // 靜態模式會保留泡泡，直到玩家點選；不會突然消失。
+      if(comboLeft>0){
+        comboLeft-=dt;
+        if(comboLeft<=0) $("combo").hidden=true;
+      }
+    }
+  }
+  drawEffects(dt);
+  requestAnimationFrame(tick);
+}
+
+/* ---------- 介面事件 ---------- */
+
+$("soundBtn").addEventListener("click",()=>{
+  soundOn=!soundOn;
+  $("soundBtn").textContent=soundOn?"♫ 音效開":"♫ 音效關";
+  $("soundBtn").setAttribute("aria-pressed",String(soundOn));
+  if(master) master.gain.setValueAtTime(soundOn?volume:0,audio.currentTime);
+  if(soundOn){
+    unlockAudio();
+    if(master) master.gain.setValueAtTime(volume,audio.currentTime);
+    sound("tap");
+  }
+});
+$("volume").addEventListener("input",e=>{
+  volume=Number(e.target.value)/100;
+  if(master) master.gain.setValueAtTime(soundOn?volume:0,audio.currentTime);
+});
+$("volume").addEventListener("change",()=>sound("tap"));
+
+$("motionBtn").addEventListener("click",()=>{
+  motionOn=!motionOn;
+  updateMotion();
+  clearEffects();
+  if(state.running){
+    clearBubbles();
+    seedBubbles();
+    state.spawnIn=.2;
+  }
+  sound("tap");
+});
+motionQuery.addEventListener("change",e=>{
+  if(e.matches){
+    motionOn=false;
+    updateMotion();
+    clearEffects();
+    if(state.running){clearBubbles();seedBubbles();}
+  }
+});
+
+$("pauseBtn").addEventListener("click",pause);
+
+$("helpBtn").addEventListener("click",()=>{
+  if($("modal").open) return;
+  const wasRunning=state.running;
+  showModal("泡泡漂流指南",
+    `<ul class="help-list">
+       <li>閱讀大字任務，點選符合類別的<strong>情緒詞語</strong>。</li>
+       <li>每關 <strong>60 秒</strong>；答對 <strong>8 次</strong>過關。</li>
+       <li>答對加 <strong>10 分</strong>，答錯扣 <strong>1 分</strong>，最低為 0。</li>
+       <li>第 2、3 關會切換任務。預警時仍以<strong>目前的大字任務</strong>為準。</li>
+       <li><strong>泡泡的顏色不是答案提示</strong>，兩類情緒都會出現不同顏色。</li>
+       <li>滑鼠移到泡泡上，或用 Tab 選中泡泡，可暫停該泡泡移動。
+           按 Enter 或空白鍵即可捕捉。</li>
+       <li>「靜態泡泡」會停止泡泡漂浮；倒數仍會繼續。</li>
+     </ul>
+     <div class="edu">
+       分類沿用遊戲詞庫作辨認練習。真實感受可能是混合的，
+       「正面／負面」並不代表情緒有好壞之分。
+     </div>`,
+    wasRunning?"明白，繼續探索 →":"返回",
+    wasRunning?resume:()=>{}, "help","HOW TO EXPLORE");
+});
+
+// 切換分頁時自動暫停，不會偷偷扣時間。
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden && state.running&&!state.paused) pause();
+  lastFrame=performance.now();
+});
+window.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&!$("modal").open && state.running&&!state.paused){
+    pause();
+  }
+});
+
+updateMotion();
+updateHUD();
+updateCollection();
+updateSwitchUI();
+resize();
+requestAnimationFrame(tick);
+welcome();
+</script>
+<!-- ==================================================
+     情緒泡泡槍：主題升級 + 任務變色準星
+     貼在上一版 HTML 的 </body> 前
+=================================================== -->
+
+<style>
+/* ---------- 霓虹泡泡槍主題 ---------- */
+
+:root {
+  color-scheme: dark;
+
+  --ink: #edf5ff;
+  --muted: #a6b7d3;
+  --paper: #10152b;
+  --purple: #c1aaff;
+  --mint: #72efcf;
+  --line: #344462;
+
+  /* 由 JavaScript 隨目前任務更新 */
+  --aim: #ff86ad;
+  --aim-rgb: 255, 134, 173;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 8% 5%, #41327180, transparent 42%),
+    radial-gradient(ellipse at 94% 60%, #16536d66, transparent 45%),
+    linear-gradient(145deg, #10152b, #141b35 55%, #10172c);
+  color: var(--ink);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(#ffffff03 1px, transparent 1px),
+    linear-gradient(90deg, #ffffff03 1px, transparent 1px);
+  background-size: 38px 38px;
+}
+
+.shell {
+  max-width: 1320px;
+}
+
+.topbar {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ffffff12;
+}
+
+.brand-mark {
+  background: linear-gradient(145deg, #6253a5, #267c91);
+  border-color: #afc9ff66;
+  border-radius: 17px;
+  box-shadow:
+    inset 0 0 14px #ffffff15,
+    0 0 28px #a08aff24;
+}
+
+.brand h1 {
+  color: #f7f8ff;
+  letter-spacing: .12em;
+  text-shadow: 0 0 25px #b6a0ff40;
+}
+
+.eyebrow {
+  color: #a8b8db;
+}
+
+.tool {
+  background: #1e2943;
+  color: #dbe7ff;
+  border-color: #435170;
+  box-shadow: inset 0 1px 0 #ffffff08;
+}
+
+.tool:hover {
+  background: #2b3857;
+  border-color: #8796c5;
+}
+
+.tool[aria-pressed="true"] {
+  color: #9af3dd;
+  border-color: #65d9bf66;
+}
+
+.tool:disabled {
+  opacity: .45;
+}
+
+.volume {
+  color: #b4c5df;
+}
+
+.volume input {
+  accent-color: #8cf0d7;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline-color: #ffe9a2;
+}
+
+/* ---------- 左側任務控制台 ---------- */
+
+.intro h2 {
+  color: #f4f7ff;
+  font-size: 2.35rem;
+}
+
+.intro h2 span {
+  color: #a8ffea;
+  text-shadow: 0 0 25px #7affdd30;
+}
+
+.intro p {
+  color: #aebbd3;
+}
+
+.stage {
+  color: #aabbd6;
+}
+
+.stage .num {
+  background: #26334f;
+  color: #b9c9e9;
+  border: 1px solid #42516f;
+}
+
+.stage.active {
+  background: linear-gradient(110deg, #33345d, #202e48);
+  color: #ffffff;
+  border-color: #a693f980;
+  box-shadow:
+    inset 3px 0 0 #b6a1ff,
+    0 0 25px #9b83e710;
+}
+
+.stage.active .num {
+  background: #b8a3ff;
+  color: #211c39;
+  border-color: #d6caff;
+}
+
+.stage.done .num {
+  background: #23483f;
+  color: #92ffdc;
+  border-color: #438e77;
+}
+
+.mission {
+  background:
+    radial-gradient(
+      circle at 95% 0,
+      rgba(var(--aim-rgb), .19),
+      transparent 65%
+    ),
+    #1c253d;
+  border: 1px solid rgba(var(--aim-rgb), .48);
+  border-radius: 22px;
+  box-shadow:
+    inset 0 0 28px rgba(var(--aim-rgb), .035),
+    0 12px 30px #00000020;
+}
+
+.mission::after {
+  border-color: rgba(var(--aim-rgb), .08);
+}
+
+.mission-label,
+.mission-word {
+  color: var(--aim);
+}
+
+.mission-word {
+  text-shadow: 0 0 30px rgba(var(--aim-rgb), .22);
+}
+
+.mission-sub {
+  color: #c3cee3;
+}
+
+.mission-sub strong {
+  color: #ffffff;
+}
+
+.target-pill {
+  background: rgba(var(--aim-rgb), .12);
+  color: var(--aim);
+  border: 1px solid rgba(var(--aim-rgb), .3);
+}
+
+.switch-box {
+  background: #0c1529a8;
+  color: #aebcd6;
+  border: 1px solid #ffffff0c;
+}
+
+.switch-box strong {
+  color: #d3c1ff;
+}
+
+.switch-track {
+  background: #39445e;
+}
+
+.switch-fill {
+  background: #c9adff;
+  box-shadow: 0 0 12px #ba93ff88;
+}
+
+.switch-box.warning {
+  background: #3f321c;
+  border-color: #dcb56888;
+  color: #ffe6b1;
+}
+
+.switch-box.warning strong {
+  color: #ffe8a7;
+}
+
+.note {
+  background: #1a2940;
+  border-color: #49706c;
+  color: #bfccd8;
+}
+
+.note strong {
+  color: #a4f0d8;
+}
+
+/* ---------- 遊戲機外框 ---------- */
+
+.board {
+  position: relative;
+  padding: 14px;
+  border: 1px solid #586884;
+  border-radius: 27px;
+  background: linear-gradient(145deg, #26314a, #1a243b);
+  box-shadow:
+    inset 0 1px 0 #ffffff25,
+    inset 0 -5px 0 #0b142480,
+    0 25px 70px #00000035,
+    0 0 45px #8797ff08;
+}
+
+.hud {
+  padding-top: 10px;
+}
+
+.metric small {
+  color: #aabbd5;
+}
+
+.metric strong {
+  color: #f4f7ff;
+}
+
+.metric em {
+  color: #b9c9df;
+}
+
+.metric-icon {
+  background: #344563;
+  color: #d5e2ff;
+  border: 1px solid #ffffff0f;
+}
+
+.metric:nth-child(2) .metric-icon {
+  background: #493e29;
+  color: #ffe5a1;
+}
+
+.metric.warning strong,
+.metric.warning em,
+.metric.warning small {
+  color: #ffadbb;
+}
+
+.metric.warning .metric-icon {
+  background: #582d43;
+}
+
+.energy {
+  gap: 5px;
+}
+
+.energy i {
+  background: #3b4961;
+  height: 8px;
+  border-radius: 3px;
+  transform: skew(-12deg);
+}
+
+.energy i.filled {
+  background: #8bedce;
+  box-shadow: 0 0 12px #83ffce65;
+}
+
+/* ---------- 泡泡槍裝備欄 ---------- */
+
+.blaster-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 62px;
+  margin: 0 3px 12px;
+  padding: 9px 14px;
+  background: #101a30;
+  border: 1px solid #485674;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.blaster-device {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.blaster-icon {
+  width: 85px;
+  height: 45px;
+  flex-shrink: 0;
+  color: var(--aim);
+  filter: drop-shadow(0 0 7px rgba(var(--aim-rgb), .24));
+  transform-origin: 25% 60%;
+}
+
+.blaster-device.firing .blaster-icon {
+  animation: blasterRecoil .2s ease-out;
+}
+
+@keyframes blasterRecoil {
+  40% {
+    transform: translateX(-5px) rotate(-7deg);
+  }
+}
+
+.blaster-name {
+  display: block;
+  color: #edf4ff;
+  font-size: .86rem;
+  font-weight: 850;
+  letter-spacing: .04em;
+}
+
+.blaster-model {
+  display: block;
+  color: #9cb0d1;
+  font-size: .58rem;
+  letter-spacing: .15em;
+}
+
+.blaster-mode {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--aim);
+  text-align: right;
+  font-size: .76rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.mode-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--aim);
+  box-shadow: 0 0 12px var(--aim);
+}
+
+.blaster-mode small {
+  display: block;
+  color: #a5b5d2;
+  font-weight: 500;
+  font-size: .59rem;
+  letter-spacing: .08em;
+}
+
+/* ---------- 霓虹射擊靶場 ---------- */
+
+.aquarium {
+  background:
+    radial-gradient(ellipse at 10% 15%, #6683af22, transparent 50%),
+    radial-gradient(ellipse at 90% 35%, #9b65d62b, transparent 55%),
+    linear-gradient(180deg, #111a32, #172940 65%, #214451);
+  border: 1px solid #647c9866;
+  box-shadow:
+    inset 0 0 60px #070d2377,
+    inset 0 1px 0 #ffffff10;
+}
+
+.aquarium::before {
+  background:
+    linear-gradient(#91ceff09 1px, transparent 1px),
+    linear-gradient(90deg, #91ceff09 1px, transparent 1px);
+  background-size: 46px 46px;
+  opacity: .9;
+}
+
+/* 遠處的靶環，與真正的瞄準準星區分 */
+.aquarium::after {
+  content: "";
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  width: 260px;
+  height: 260px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid #afc9ff12;
+  box-shadow:
+    0 0 0 36px #afc9ff04,
+    0 0 0 37px #afc9ff0b,
+    0 0 0 73px #afc9ff03,
+    0 0 0 74px #afc9ff07;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.seabed {
+  opacity: .25;
+  filter: saturate(.7);
+}
+
+.watermark {
+  color: #a0b9d8;
+}
+
+.live {
+  background: #92f1d0;
+  box-shadow: 0 0 8px #91ffcc88;
+}
+
+.tank-label {
+  color: #c5d7f0;
+  background: #18243dcc;
+  border-color: #91b2e244;
+}
+
+.tank-hint {
+  background: #111e35d9;
+  color: #c3d4e9;
+  border-color: #91b2e244;
+}
+
+.board-footer {
+  color: #b0c0d8;
+}
+
+.board-footer strong {
+  color: #a8f2da;
+}
+
+/* 泡泡仍使用隨機顏色，不洩露正負面答案 */
+.bubble {
+  border-color: #ffffffdd;
+  box-shadow:
+    inset 0 -9px 14px #ffffff60,
+    inset -5px -6px 12px #647db83b,
+    inset 3px 4px 10px #ffffffbb,
+    0 0 20px #9bd9ff18,
+    0 9px 18px #02081740;
+}
+
+.bubble:hover {
+  box-shadow:
+    inset 0 -9px 14px #ffffff80,
+    0 0 0 3px rgba(var(--aim-rgb), .6),
+    0 0 27px rgba(var(--aim-rgb), .3);
+}
+
+.bubble:focus-visible {
+  outline-color: var(--aim);
+}
+
+.combo {
+  background: #302b50ed;
+  color: #e4d1ff;
+  border: 1px solid #ad92e680;
+  box-shadow: 0 0 28px #bb87fa20;
+}
+
+.float-score {
+  color: #c6ffe7;
+  text-shadow:
+    0 2px 5px #10283d,
+    0 0 15px #66ffdbaa;
+}
+
+/* ---------- 圖鑑 ---------- */
+
+.collection-title {
+  color: #e0e8fa;
+}
+
+.collection-title small {
+  color: #a4b7d3;
+}
+
+.word-chip {
+  background: #202c43;
+  border-color: #465571;
+  color: #b2c0d7;
+}
+
+.word-chip.found {
+  background: #233e3c;
+  border-color: #598f7e;
+  color: #b1ffe3;
+}
+
+footer {
+  color: #a9b9d0;
+}
+
+/* ---------- 彈出視窗：裝備簡報 ---------- */
+
+dialog {
+  color-scheme: dark;
+  color: #edf3ff;
+  background: #1b263e;
+  border-color: #8695b755;
+  box-shadow:
+    0 30px 100px #00000070,
+    0 0 45px #9571db15;
+}
+
+dialog::backdrop {
+  background: #050b1db5;
+}
+
+.modal-art {
+  background:
+    radial-gradient(circle at 50% 120%, #53768d88, transparent 65%),
+    linear-gradient(115deg, #2a3d5b, #403558);
+}
+
+.art-orbit {
+  border-color: #c7dbff33;
+}
+
+.art-bubble {
+  color: #273952;
+}
+
+.modal-copy h2 {
+  color: #f5f7ff;
+}
+
+.modal-copy p {
+  color: #c0cce0;
+}
+
+.modal-copy strong {
+  color: #aff7df;
+}
+
+.rule {
+  background: #28354d;
+  color: #b8c8e1;
+  border: 1px solid #ffffff09;
+}
+
+.rule b {
+  color: #d4c2ff;
+}
+
+.edu {
+  color: #e2d5b7;
+  background: #383526;
+  border-color: #9c87534d;
+}
+
+.edu strong {
+  color: #ffecb5;
+}
+
+.primary {
+  background: linear-gradient(110deg, #9b86ed, #7bcce0);
+  color: #17213a;
+  box-shadow:
+    0 6px 0 #4e5689,
+    0 12px 28px #9081ea25;
+}
+
+.primary:hover {
+  background: linear-gradient(110deg, #bba8ff, #9be1ed);
+}
+
+.primary:active {
+  box-shadow: 0 3px 0 #4e5689;
+}
+
+.modal-copy .big-word {
+  color: #d4bbff;
+}
+
+.type-tag {
+  background: #41375c;
+  color: #eadcff;
+}
+
+.definition {
+  background: #121d32;
+  border-color: #495777;
+}
+
+.definition small {
+  color: #acbdd8;
+}
+
+.definition p {
+  color: #e5ecfa;
+}
+
+.help-list {
+  color: #c4cfe4;
+}
+
+.final-number {
+  color: #a6f6db;
+}
+
+/* ---------- 自訂變色準星 ---------- */
+
+/* 只在遊戲區、且準星實際顯示時隱藏原生游標 */
+.aquarium.aim-active,
+.aquarium.aim-active .bubble {
+  cursor: none !important;
+}
+
+#emotionCrosshair {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 60px;
+  height: 60px;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  pointer-events: none;
+  color: var(--aim);
+  filter: drop-shadow(0 0 6px rgba(var(--aim-rgb), .5));
+}
+
+#emotionCrosshair[hidden] {
+  display: none;
+}
+
+.aim-ring {
+  position: absolute;
+  inset: 9px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  background: rgba(var(--aim-rgb), .035);
+}
+
+.aim-ring::before,
+.aim-ring::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+}
+
+.aim-ring::before {
+  border: 1px dashed currentColor;
+  opacity: .55;
+}
+
+.aim-ring::after {
+  inset: -10px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-bottom-color: currentColor;
+  transform: rotate(45deg);
+  opacity: .8;
+}
+
+.aim-line {
+  position: absolute;
+  display: block;
+  background: currentColor;
+  border-radius: 3px;
+}
+
+.aim-line.top,
+.aim-line.bottom {
+  width: 2px;
+  height: 13px;
+  left: 29px;
+}
+
+.aim-line.top {
+  top: 0;
+}
+
+.aim-line.bottom {
+  bottom: 0;
+}
+
+.aim-line.left,
+.aim-line.right {
+  width: 13px;
+  height: 2px;
+  top: 29px;
+}
+
+.aim-line.left {
+  left: 0;
+}
+
+.aim-line.right {
+  right: 0;
+}
+
+.aim-dot {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  left: 27.5px;
+  top: 27.5px;
+  background: currentColor;
+  border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.aim-caption {
+  position: absolute;
+  top: 66px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 3px 8px;
+  border: 1px solid rgba(var(--aim-rgb), .55);
+  border-radius: 6px;
+  background: #10182eee;
+  color: currentColor;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .08em;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+#emotionCrosshair.locked .aim-ring {
+  background: rgba(var(--aim-rgb), .14);
+  box-shadow: 0 0 0 4px rgba(var(--aim-rgb), .08);
+}
+
+#emotionCrosshair.shooting .aim-ring {
+  animation: aimKick .22s ease-out;
+}
+
+@keyframes aimKick {
+  0% {
+    transform: scale(.65);
+    opacity: 1;
+  }
+  65% {
+    transform: scale(1.22);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 点击瞬間的槍口能量環 */
+.shot-ring {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--aim);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 15px rgba(var(--aim-rgb), .35);
+  pointer-events: none;
+  z-index: 7;
+  animation: shotExpand .38s ease-out forwards;
+}
+
+@keyframes shotExpand {
+  from {
+    opacity: .95;
+    width: 15px;
+    height: 15px;
+  }
+  to {
+    opacity: 0;
+    width: 88px;
+    height: 88px;
+  }
+}
+
+/* 靜態設定仍保留準星，但不播放射擊動畫 */
+body.calm .shot-ring {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shot-ring {
+    display: none;
+  }
+}
+
+@media (max-width: 960px) {
+  .intro h2 {
+    font-size: 2rem;
+  }
+
+  .blaster-name {
+    font-size: .77rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .topbar {
+    padding-bottom: 12px;
+  }
+
+  .board {
+    border-radius: 23px;
+    padding: 9px;
+  }
+
+  .blaster-strip {
+    min-height: 53px;
+    margin-bottom: 9px;
+    padding: 7px 10px;
+    gap: 8px;
+    border-radius: 12px;
+  }
+
+  .blaster-device {
+    gap: 8px;
+  }
+
+  .blaster-icon {
+    width: 60px;
+    height: 35px;
+  }
+
+  .blaster-name {
+    font-size: .72rem;
+  }
+
+  .blaster-model {
+    font-size: .48rem;
+  }
+
+  .blaster-mode {
+    font-size: .68rem;
+    gap: 6px;
+  }
+
+  .blaster-mode small {
+    font-size: .52rem;
+  }
+
+  .mission {
+    border-radius: 18px;
+  }
+
+  .aim-caption {
+    top: 62px;
+    font-size: 9px;
+  }
+}
+</style>
+
+<script>
+(() => {
+  "use strict";
+
+  /*
+   * 此擴充使用上一版的 state、motionOn、sound() 及 announce()。
+   * 不額外建立計時器或任務切換循環，避免影響原本遊戲規則。
+   */
+
+  const gameTank = document.getElementById("tank");
+  const bubbleArea = document.getElementById("bubbleLayer");
+  const gameModal = document.getElementById("modal");
+
+  if (!gameTank || !bubbleArea || !gameModal) {
+    console.warn("情緒泡泡槍主題：請使用上一版「情緒漂流所」HTML。");
+    return;
+  }
+
+  /* ---------- 更換主題文字 ---------- */
+
+  document.title = "情緒泡泡槍｜瞄準詞語，認識情緒";
+
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeMeta) themeMeta.content = "#10152b";
+
+  document.querySelector(".brand h1").textContent = "情緒泡泡槍";
+  document.querySelector(".brand .eyebrow").textContent =
+    "EMOTION BLASTER · BUBBLE ARCADE";
+
+  document.querySelector(".brand-mark").textContent = "🎯";
+
+  document.querySelector(".intro > .eyebrow").textContent =
+    "READY · AIM · UNDERSTAND";
+
+  document.querySelector(".intro h2").innerHTML =
+    '瞄準泡泡，<br>認識<span>每種心情。</span>';
+
+  document.querySelector(".intro > p").textContent =
+    "裝備你的泡泡槍，跟隨變色準星，射擊符合任務的情緒詞語。";
+
+  document.querySelector(".mission-label").textContent =
+    "⌖ 目前射擊目標";
+
+  document.querySelector(".mission-sub").innerHTML = `
+    <span class="target-pill" id="targetTag">負面任務</span><br>
+    準星變色，<strong>任務同步</strong>
+  `;
+
+  document.querySelector(".watermark").innerHTML =
+    '<span class="live"></span>EMOTION BLASTER · TRAINING ZONE';
+
+  document.querySelector(".note").innerHTML = `
+    <span aria-hidden="true">🫧</span>
+    <div>
+      <strong>射擊泡泡，不是消滅情緒</strong><br>
+      泡泡槍是辨認練習。
+      生氣、難過或害怕，都值得被理解。
+    </div>
+  `;
+
+  document.querySelector(".board").setAttribute(
+    "aria-label",
+    "情緒泡泡槍射擊區"
+  );
+
+  bubbleArea.setAttribute(
+    "aria-label",
+    "射擊符合目前任務的情緒泡泡"
+  );
+
+  /* 修改首次出現的歡迎畫面 */
+  const welcomeTitle = document.getElementById("modalTitle");
+
+  if (welcomeTitle.textContent === "今天，一起認識心情。") {
+    welcomeTitle.textContent = "情緒泡泡槍，準備發射！";
+
+    document.getElementById("modalEyebrow").textContent =
+      "WELCOME TO EMOTION BLASTER";
+
+    const welcomeParagraph =
+      document.querySelector("#modalBody > p");
+
+    if (welcomeParagraph) {
+      welcomeParagraph.innerHTML = `
+        拿起你的<strong>情緒泡泡槍</strong>！
+        跟隨任務與變色準星，
+        射擊符合類別的<strong>情緒詞語</strong>。
+      `;
+    }
+
+    document.getElementById("modalBtn").textContent =
+      "裝備泡泡槍，開始挑戰　↗";
+  }
+
+  /* ---------- 加入泡泡槍裝備欄 ---------- */
+
+  const weaponStrip = document.createElement("div");
+  weaponStrip.className = "blaster-strip";
+
+  weaponStrip.innerHTML = `
+    <div class="blaster-device" id="blasterDevice">
+      <svg
+        class="blaster-icon"
+        viewBox="0 0 110 58"
+        fill="none"
+        aria-hidden="true"
+      >
+        <!-- 泡泡能量艙 -->
+        <circle
+          cx="31" cy="16" r="11"
+          fill="currentColor" fill-opacity=".18"
+          stroke="currentColor" stroke-width="2"
+        />
+        <circle cx="28" cy="12" r="3" fill="#ffffff" fill-opacity=".8"/>
+        <circle cx="35" cy="19" r="2" fill="currentColor"/>
+
+        <!-- 玩具泡泡槍身 -->
+        <path
+          d="M17 24H61L71 29V39H40L34 51H22L26 37H17Z"
+          fill="#58618e"
+          stroke="#dae4ff"
+          stroke-width="2"
+          stroke-linejoin="round"
+        />
+
+        <!-- 握柄 -->
+        <path
+          d="M27 38H37L32 48H24Z"
+          fill="#c0a8fa"
+        />
+
+        <!-- 能量條 -->
+        <path
+          d="M27 29H48"
+          stroke="currentColor"
+          stroke-width="4"
+          stroke-linecap="round"
+        />
+
+        <!-- 槍口 -->
+        <path
+          d="M61 26H78V39H61"
+          fill="currentColor"
+          fill-opacity=".2"
+          stroke="currentColor"
+          stroke-width="2"
+        />
+        <path
+          d="M77 24V41"
+          stroke="currentColor"
+          stroke-width="4"
+          stroke-linecap="round"
+        />
+
+        <!-- 發射的泡泡 -->
+        <circle cx="89" cy="30" r="5" stroke="currentColor" stroke-width="2"/>
+        <circle cx="102" cy="21" r="3" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="100" cy="41" r="2" fill="currentColor"/>
+      </svg>
+
+      <div>
+        <span class="blaster-name">情緒泡泡槍</span>
+        <span class="blaster-model">EB–01 · BUBBLE BLASTER</span>
+      </div>
+    </div>
+
+    <div class="blaster-mode">
+      <span class="mode-led" aria-hidden="true"></span>
+      <div>
+        <span id="blasterModeText">負面情緒模式</span>
+        <small>無限泡泡 · 不用換彈</small>
+      </div>
+    </div>
+  `;
+
+  gameTank.before(weaponStrip);
+
+  /* ---------- 建立自訂準星 ---------- */
+
+  const crosshair = document.createElement("div");
+  crosshair.id = "emotionCrosshair";
+  crosshair.hidden = true;
+  crosshair.setAttribute("aria-hidden", "true");
+
+  crosshair.innerHTML = `
+    <div class="aim-ring"></div>
+    <i class="aim-line top"></i>
+    <i class="aim-line bottom"></i>
+    <i class="aim-line left"></i>
+    <i class="aim-line right"></i>
+    <i class="aim-dot"></i>
+    <span class="aim-caption" id="aimCaption">負面情緒</span>
+  `;
+
+  document.body.append(crosshair);
+
+  let hideTimer = null;
+  let recoilTimer = null;
+  let lastPointer = null;
+  let pointerInside = false;
+
+  function canAim() {
+    return (
+      state.running &&
+      !state.paused &&
+      !gameModal.open
+    );
+  }
+
+  /* 以實際任務 state.target 為準，而非預警文字 */
+  function syncAimColor() {
+    const negative = state.target === "negative";
+    const color = negative ? "#ff86ad" : "#7af3ca";
+    const rgb = negative ? "255, 134, 173" : "122, 243, 202";
+    const label = negative ? "負面情緒" : "正面情緒";
+
+    document.documentElement.style.setProperty("--aim", color);
+    document.documentElement.style.setProperty("--aim-rgb", rgb);
+
+    document.getElementById("aimCaption").textContent = label;
+    document.getElementById("blasterModeText").textContent =
+      `${label}模式`;
+  }
+
+  function hideAim() {
+    crosshair.hidden = true;
+    crosshair.classList.remove("locked");
+    gameTank.classList.remove("aim-active");
+
+    clearTimeout(hideTimer);
+    hideTimer = null;
+  }
+
+  function showAim(x, y, locked = false, hideNativeCursor = true) {
+    if (!canAim()) {
+      hideAim();
+      return;
+    }
+
+    crosshair.style.left = x + "px";
+    crosshair.style.top = y + "px";
+    crosshair.classList.toggle("locked", locked);
+    crosshair.hidden = false;
+
+    gameTank.classList.toggle("aim-active", hideNativeCursor);
+  }
+
+  function rememberPointer(event) {
+    lastPointer = {
+      x: event.clientX,
+      y: event.clientY,
+      type: event.pointerType
+    };
+  }
+
+  function aimFromPointer(event) {
+    rememberPointer(event);
+
+    const locked = Boolean(event.target.closest(".bubble"));
+
+    showAim(
+      event.clientX,
+      event.clientY,
+      locked,
+      event.pointerType === "mouse"
+    );
+  }
+
+  function flashShot(x, y) {
+    if (!canAim()) return;
+
+    const device = document.getElementById("blasterDevice");
+
+    crosshair.classList.remove("shooting");
+    device.classList.remove("firing");
+
+    /* 重新觸發 CSS 動畫 */
+    void crosshair.offsetWidth;
+
+    crosshair.classList.add("shooting");
+    device.classList.add("firing");
+
+    clearTimeout(recoilTimer);
+    recoilTimer = setTimeout(() => {
+      crosshair.classList.remove("shooting");
+      device.classList.remove("firing");
+    }, 240);
+
+    if (!motionOn) return;
+
+    const rect = gameTank.getBoundingClientRect();
+    const ring = document.createElement("span");
+
+    ring.className = "shot-ring";
+    ring.style.left = (x - rect.left) + "px";
+    ring.style.top = (y - rect.top) + "px";
+
+    gameTank.append(ring);
+    setTimeout(() => ring.remove(), 420);
+  }
+
+  /* ---------- 滑鼠準星 ---------- */
+
+  gameTank.addEventListener("pointerenter", event => {
+    pointerInside = true;
+
+    if (event.pointerType === "mouse") {
+      aimFromPointer(event);
+    }
+  });
+
+  gameTank.addEventListener("pointermove", event => {
+    pointerInside = true;
+
+    /* 觸控不追蹤拖曳，避免影響頁面捲動 */
+    if (event.pointerType === "mouse" || event.pointerType === "pen") {
+      aimFromPointer(event);
+    }
+  });
+
+  gameTank.addEventListener("pointerleave", () => {
+    pointerInside = false;
+    hideAim();
+  });
+
+  gameTank.addEventListener("pointercancel", hideAim);
+
+  /* ---------- 手機／觸控筆：點擊時顯示準星 ---------- */
+
+  gameTank.addEventListener("pointerdown", event => {
+    if (event.button !== 0 || !canAim()) return;
+
+    clearTimeout(hideTimer);
+    aimFromPointer(event);
+
+    if (event.pointerType !== "mouse") {
+      hideTimer = setTimeout(hideAim, 650);
+    }
+  });
+
+  /*
+   * 在 capture 階段顯示射擊效果。
+   * 原本泡泡的 click 判定仍由上一版負責，不會重複計分。
+   */
+  gameTank.addEventListener("click", event => {
+    if (!canAim()) return;
+
+    const bubble = event.target.closest(".bubble");
+    let x = event.clientX;
+    let y = event.clientY;
+
+    /*
+     * 鍵盤啟動按鈕時 click.detail 為 0，
+     * 此時準星定位到泡泡中心，不使用 0,0 座標。
+     */
+    if (event.detail === 0 && bubble) {
+      const rect = bubble.getBoundingClientRect();
+      x = rect.left + rect.width / 2;
+      y = rect.top + rect.height / 2;
+
+      showAim(x, y, true, false);
+    } else if (crosshair.hidden) {
+      showAim(x, y, Boolean(bubble), false);
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(hideAim, 500);
+    }
+
+    flashShot(x, y);
+
+    /*
+     * 射中空白處只提供輕聲回饋，不扣分。
+     * 射中泡泡則沿用原本答對／答錯音效。
+     */
+    if (!bubble) {
+      sound("tap");
+    }
+  }, true);
+
+  /* ---------- 鍵盤也能使用準星 ---------- */
+
+  bubbleArea.addEventListener("focusin", event => {
+    const bubble = event.target.closest(".bubble");
+
+    if (!bubble || !canAim()) return;
+    if (!bubble.matches(":focus-visible")) return;
+
+    const rect = bubble.getBoundingClientRect();
+
+    showAim(
+      rect.left + rect.width / 2,
+      rect.top + rect.height / 2,
+      true,
+      false
+    );
+  });
+
+  bubbleArea.addEventListener("focusout", () => {
+    requestAnimationFrame(() => {
+      if (!bubbleArea.contains(document.activeElement)) {
+        hideAim();
+      }
+    });
+  });
+
+  /* ---------- 任務切換：顏色同步 ---------- */
+
+  /*
+   * 原版 setTarget() 每次正式切換都更新 targetWord。
+   * 監察這個節點，可確保預警時不會提早變色。
+   */
+  const targetObserver = new MutationObserver(syncAimColor);
+
+  targetObserver.observe(
+    document.getElementById("targetWord"),
+    {
+      childList: true,
+      characterData: true,
+      subtree: true
+    }
+  );
+
+  /* ---------- 暫停、解說及結算時隱藏準星 ---------- */
+
+  const modalObserver = new MutationObserver(() => {
+    if (gameModal.open || !canAim()) {
+      hideAim();
+    }
+  });
+
+  modalObserver.observe(gameModal, {
+    attributes: true,
+    attributeFilter: ["open"]
+  });
+
+  window.addEventListener("blur", hideAim);
+
+  window.addEventListener("scroll", () => {
+    /*
+     * 捲動後檢查指標是否仍位於靶場內，
+     * 避免準星留在工具列或頁面其他位置。
+     */
+    if (!lastPointer || lastPointer.type !== "mouse") {
+      hideAim();
+      return;
+    }
+
+    if (!pointerInside || !canAim()) {
+      hideAim();
+      return;
+    }
+
+    const underPointer = document.elementFromPoint(
+      lastPointer.x,
+      lastPointer.y
+    );
+
+    if (!underPointer || !gameTank.contains(underPointer)) {
+      pointerInside = false;
+      hideAim();
+    }
+  }, { passive: true });
+
+  window.addEventListener("resize", hideAim);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) hideAim();
+  });
+
+  syncAimColor();
+})();
+</script>
+</body>
+</html>
